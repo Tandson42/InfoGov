@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
+        
+        // Configura redirecionamento de API para retornar JSON ao invés de redirect
+        $middleware->redirectGuestsTo(fn () => response()->json([
+            'message' => 'Unauthenticated.'
+        ], 401));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

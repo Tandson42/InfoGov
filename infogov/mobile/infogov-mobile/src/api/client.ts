@@ -63,6 +63,14 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
+    // Erro de rede (servidor inacessível)
+    if (!error.response) {
+      // Transforma erro de rede em mensagem mais amigável
+      const networkError = new Error('Network Error');
+      networkError.message = 'Não foi possível conectar ao servidor. Verifique sua conexão ou tente mais tarde.';
+      return Promise.reject(networkError);
+    }
+
     // Token inválido ou expirado
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
