@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // iOS Simulator: http://localhost:8000/api/v1
 // Dispositivo físico: http://SEU_IP:8000/api/v1
 const API_URL = __DEV__
-  ? 'http://10.0.2.2:8000/api/v1'
+  ? 'http://192.168.100.64:8000/api/v1'
   : 'https://sua-api-producao.com/api/v1';
 
 /**
@@ -62,6 +62,14 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    // Erro de rede (servidor inacessível)
+    if (!error.response) {
+      // Transforma erro de rede em mensagem mais amigável
+      const networkError = new Error('Network Error');
+      networkError.message = 'Não foi possível conectar ao servidor. Verifique sua conexão ou tente mais tarde.';
+      return Promise.reject(networkError);
+    }
 
     // Token inválido ou expirado
     if (error.response?.status === 401 && !originalRequest._retry) {

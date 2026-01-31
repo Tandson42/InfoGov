@@ -10,13 +10,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
-  Image,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import theme from '../../theme';
+import { handleAuthError } from '../../utils/toast';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -42,11 +41,10 @@ export default function LoginScreen() {
 
     try {
       await signIn(email, password);
+      // Login bem-sucedido - navegação automática pelo AuthContext
     } catch (error) {
-      Alert.alert(
-        'Erro ao fazer login',
-        error instanceof Error ? error.message : 'Credenciais inválidas'
-      );
+      // Tratamento de erros com mensagens específicas
+      handleAuthError(error);
     } finally {
       setLoading(false);
     }

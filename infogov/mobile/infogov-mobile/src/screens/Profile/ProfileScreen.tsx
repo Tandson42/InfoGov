@@ -20,6 +20,7 @@ import { formatDateTime, getRoleName, getRoleColor } from '../../utils/helpers';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
+  const [loggingOut, setLoggingOut] = React.useState(false);
 
   const handleLogout = () => {
     Alert.alert('Sair', 'Deseja realmente sair da aplicação?', [
@@ -28,10 +29,14 @@ export default function ProfileScreen() {
         text: 'Sair',
         style: 'destructive',
         onPress: async () => {
+          setLoggingOut(true);
           try {
             await signOut();
+            // O usuário será deslogado e redirecionado automaticamente
           } catch (error) {
             console.error('Erro ao fazer logout:', error);
+            Alert.alert('Erro', 'Não foi possível sair. Tente novamente.');
+            setLoggingOut(false);
           }
         },
       },
@@ -189,6 +194,8 @@ export default function ProfileScreen() {
         title="Sair da Conta"
         variant="danger"
         onPress={handleLogout}
+        loading={loggingOut}
+        disabled={loggingOut}
         style={styles.logoutButton}
       />
 
