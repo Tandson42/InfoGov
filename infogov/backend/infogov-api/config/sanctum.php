@@ -15,12 +15,14 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort(),
-        // Sanctum::currentRequestHost(),
-    ))),
+    /*
+     * Para API com tokens (React Native):
+     * Deixe vazio ou configure apenas se usar sessões/cookies
+     * 
+     * Para SPA com sessões (React Web):
+     * Configure os domínios do frontend (ex: localhost:3000, seu-dominio.com)
+     */
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', '')),
 
     /*
     |--------------------------------------------------------------------------
@@ -47,7 +49,12 @@ return [
     |
     */
 
-    'expiration' => null,
+    /*
+     * Tempo de expiração dos tokens em minutos
+     * null = tokens não expiram
+     * Recomendado: 60 (1 hora), 1440 (1 dia), 10080 (7 dias)
+     */
+    'expiration' => env('SANCTUM_EXPIRATION', null),
 
     /*
     |--------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -100,4 +101,23 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             ]);
         })->name('public.services');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rotas de Departamentos (CRUD Completo)
+    |--------------------------------------------------------------------------
+    |
+    | Todos usuários autenticados podem visualizar
+    | Apenas Administradores podem criar/editar/excluir
+    |
+    */
+    
+    Route::apiResource('departments', DepartmentController::class);
+    
+    // Rotas adicionais para soft deletes (apenas admin)
+    Route::post('departments/{id}/restore', [DepartmentController::class, 'restore'])
+        ->name('departments.restore');
+    
+    Route::delete('departments/{id}/force', [DepartmentController::class, 'forceDestroy'])
+        ->name('departments.force-destroy');
 });

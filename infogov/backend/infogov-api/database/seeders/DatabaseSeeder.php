@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         // Primeiro cria os papéis
         $this->call([
             RoleSeeder::class,
+            DepartmentSeeder::class, // Adiciona departamentos de exemplo
         ]);
 
         // Exemplo: Criar usuários de teste (comentado por padrão)
