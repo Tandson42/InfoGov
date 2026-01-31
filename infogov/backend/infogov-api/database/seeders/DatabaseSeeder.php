@@ -15,11 +15,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Primeiro cria os papéis
+        $this->call([
+            RoleSeeder::class,
         ]);
+
+        // Exemplo: Criar usuários de teste (comentado por padrão)
+        // User::factory(10)->create();
+        
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
     }
 }
