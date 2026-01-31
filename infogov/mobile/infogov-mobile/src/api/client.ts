@@ -9,14 +9,17 @@
  */
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '../utils/storage';
 
 // URL base da API
 // Android Emulator: http://10.0.2.2:8000/api/v1
 // iOS Simulator: http://localhost:8000/api/v1
+// Web: http://localhost:8000/api/v1
 // Dispositivo físico: http://SEU_IP:8000/api/v1
 const API_URL = __DEV__
-  ? 'http://192.168.100.64:8000/api/v1'
+  ? (typeof window !== 'undefined' 
+      ? 'http://192.168.100.64:8000/api/v1'  // Web
+      : 'http://192.168.100.64:8000/api/v1')  // Mobile
   : 'https://sua-api-producao.com/api/v1';
 
 /**
@@ -38,10 +41,17 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
-      const token = await AsyncStorage.getItem('@InfoGov:token');
+      const token = await storage.getItem('@InfoGov:token');
       
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
+        // Debug: log apenas em desenvolvimento (reduzido para não poluir console)
+        // console.log('Token enviado:', token.substring(0, 20) + '...');
+      } else {
+        // Não mostra aviso para /auth/logout pois removemos o token antes intencionalmente
+        if (!config.url?.includes('/auth/logout')) {
+          console.warn('⚠️ Token não encontrado no storage para:', config.url);
+        }
       }
     } catch (error) {
       console.error('Erro ao recuperar token:', error);
@@ -77,7 +87,7 @@ api.interceptors.response.use(
 
       try {
         // Remove token e dados do usuário
-        await AsyncStorage.multiRemove([
+        await storage.multiRemove([
           '@InfoGov:token',
           '@InfoGov:user',
         ]);

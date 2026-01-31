@@ -4,7 +4,7 @@
  * Gerencia login, logout, registro e obtenção do usuário autenticado
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '../utils/storage';
 import api from './client';
 import {
   LoginRequest,
@@ -30,8 +30,8 @@ class AuthService {
 
     const { user, token } = data.data;
 
-    // Salva token e usuário no AsyncStorage
-    await AsyncStorage.multiSet([
+    // Salva token e usuário no storage
+    await storage.multiSet([
       [this.TOKEN_KEY, token],
       [this.USER_KEY, JSON.stringify(user)],
     ]);
@@ -51,8 +51,8 @@ class AuthService {
 
     const { user, token } = data.data;
 
-    // Salva token e usuário no AsyncStorage
-    await AsyncStorage.multiSet([
+    // Salva token e usuário no storage
+    await storage.multiSet([
       [this.TOKEN_KEY, token],
       [this.USER_KEY, JSON.stringify(user)],
     ]);
@@ -72,8 +72,8 @@ class AuthService {
 
     const { user } = data.data;
 
-    // Atualiza dados do usuário no AsyncStorage
-    await AsyncStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    // Atualiza dados do usuário no storage
+    await storage.setItem(this.USER_KEY, JSON.stringify(user));
 
     return user;
   }
@@ -82,15 +82,24 @@ class AuthService {
    * Realiza logout do usuário
    */
   async logout(): Promise<void> {
+    // Remove dados locais primeiro (importante para garantir limpeza)
+    await storage.multiRemove([this.TOKEN_KEY, this.USER_KEY]);
+    
+    console.log('🔓 Logout: Token e usuário removidos do storage');
+    
     try {
-      // Tenta fazer logout no servidor
+      // Tenta fazer logout no servidor (opcional, já limpamos localmente)
+      // Nota: Pode retornar 401 pois removemos o token antes, mas isso é esperado
       await api.post('/auth/logout');
-    } catch (error) {
-      console.error('Erro ao fazer logout no servidor:', error);
-      // Continua com logout local mesmo se falhar no servidor
-    } finally {
-      // Remove dados locais
-      await AsyncStorage.multiRemove([this.TOKEN_KEY, this.USER_KEY]);
+      console.log('✅ Logout: Servidor notificado com sucesso');
+    } catch (error: any) {
+      // Ignora erro do servidor (especialmente 401), já limpamos localmente
+      // 401 é esperado pois removemos o token antes de chamar o servidor
+      if (error?.response?.status === 401) {
+        console.log('ℹ️ Logout: Token já removido (esperado)');
+      } else {
+        console.warn('⚠️ Logout: Servidor não foi notificado (não crítico):', error);
+      }
     }
   }
 
@@ -98,7 +107,7 @@ class AuthService {
    * Verifica se existe token salvo
    */
   async isAuthenticated(): Promise<boolean> {
-    const token = await AsyncStorage.getItem(this.TOKEN_KEY);
+    const token = await storage.getItem(this.TOKEN_KEY);
     return !!token;
   }
 
@@ -106,14 +115,14 @@ class AuthService {
    * Obtém token salvo
    */
   async getToken(): Promise<string | null> {
-    return await AsyncStorage.getItem(this.TOKEN_KEY);
+    return await storage.getItem(this.TOKEN_KEY);
   }
 
   /**
    * Obtém usuário salvo
    */
   async getStoredUser(): Promise<User | null> {
-    const userJson = await AsyncStorage.getItem(this.USER_KEY);
+    const userJson = await storage.getItem(this.USER_KEY);
     return userJson ? JSON.parse(userJson) : null;
   }
 }

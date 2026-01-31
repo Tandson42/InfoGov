@@ -149,8 +149,11 @@ function RootNavigator() {
  * Container Principal de Navegação
  */
 export default function Navigation() {
+  const { signed } = useAuth();
+  
+  // Usa 'signed' como key para forçar re-render quando o estado de autenticação mudar
   return (
-    <NavigationContainer>
+    <NavigationContainer key={signed ? 'authenticated' : 'unauthenticated'}>
       <RootNavigator />
     </NavigationContainer>
   );

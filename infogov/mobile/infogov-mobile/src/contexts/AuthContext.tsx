@@ -81,12 +81,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   async function signOut() {
     try {
+      // Remove dados locais primeiro para garantir que o estado seja atualizado
       await authService.logout();
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-    } finally {
-      setUser(null);
+      // Mesmo se falhar no servidor, remove dados locais
+      try {
+        await authService.logout();
+      } catch (e) {
+        console.error('Erro ao limpar dados locais:', e);
+      }
     }
+    
+    // Garante que o estado seja limpo (fora do finally para sempre executar)
+    setUser(null);
+    setLoading(false);
+    
+    console.log('✅ Logout concluído - usuário removido do estado, redirecionando para login...');
   }
 
   /**

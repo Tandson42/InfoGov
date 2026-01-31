@@ -23,24 +23,60 @@ export default function ProfileScreen() {
   const [loggingOut, setLoggingOut] = React.useState(false);
 
   const handleLogout = () => {
-    Alert.alert('Sair', 'Deseja realmente sair da aplicação?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Sair',
-        style: 'destructive',
-        onPress: async () => {
-          setLoggingOut(true);
-          try {
-            await signOut();
-            // O usuário será deslogado e redirecionado automaticamente
-          } catch (error) {
-            console.error('Erro ao fazer logout:', error);
-            Alert.alert('Erro', 'Não foi possível sair. Tente novamente.');
-            setLoggingOut(false);
-          }
+    console.log('🔴 handleLogout chamado!');
+    
+    // Na web, Alert pode não funcionar bem, então vamos usar confirm
+    const isWeb = typeof window !== 'undefined' && typeof (window as any).confirm === 'function';
+    
+    if (isWeb) {
+      // Na web, usa window.confirm
+      const confirmed = (window as any).confirm('Deseja realmente sair da aplicação?');
+      if (confirmed) {
+        console.log('✅ Usuário confirmou logout');
+        performLogout();
+      } else {
+        console.log('❌ Usuário cancelou logout');
+      }
+    } else {
+      // No mobile, usa Alert
+      Alert.alert('Sair', 'Deseja realmente sair da aplicação?', [
+        { text: 'Cancelar', style: 'cancel', onPress: () => console.log('❌ Usuário cancelou logout') },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: () => {
+            console.log('✅ Usuário confirmou logout');
+            performLogout();
+          },
         },
-      },
-    ]);
+      ]);
+    }
+  };
+
+  const performLogout = async () => {
+    console.log('🚀 Iniciando processo de logout...');
+    setLoggingOut(true);
+    
+    try {
+      console.log('📞 Chamando signOut()...');
+      await signOut();
+      console.log('✅ signOut() concluído com sucesso');
+      
+      // Pequeno delay para garantir que o estado seja atualizado
+      setTimeout(() => {
+        setLoggingOut(false);
+        console.log('🏁 Logout finalizado');
+      }, 100);
+    } catch (error) {
+      console.error('❌ Erro ao fazer logout:', error);
+      const isWeb = typeof window !== 'undefined' && typeof (window as any).alert === 'function';
+      if (isWeb) {
+        (window as any).alert('Erro: Não foi possível sair. Tente novamente.');
+      } else {
+        Alert.alert('Erro', 'Não foi possível sair. Tente novamente.');
+      }
+      setLoggingOut(false);
+    }
   };
 
   return (
@@ -193,7 +229,10 @@ export default function ProfileScreen() {
       <Button
         title="Sair da Conta"
         variant="danger"
-        onPress={handleLogout}
+        onPress={() => {
+          console.log('🖱️ Botão "Sair da Conta" clicado!');
+          handleLogout();
+        }}
         loading={loggingOut}
         disabled={loggingOut}
         style={styles.logoutButton}

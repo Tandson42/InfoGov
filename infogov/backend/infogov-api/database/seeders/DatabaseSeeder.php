@@ -18,15 +18,8 @@ class DatabaseSeeder extends Seeder
         // Primeiro cria os papéis
         $this->call([
             RoleSeeder::class,
+            UserSeeder::class, // Cria os usuários de teste
             DepartmentSeeder::class, // Adiciona departamentos de exemplo
         ]);
-
-        // Exemplo: Criar usuários de teste (comentado por padrão)
-        // User::factory(10)->create();
-        
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }
