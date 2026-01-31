@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // iOS Simulator: http://localhost:8000/api/v1
 // Dispositivo físico: http://SEU_IP:8000/api/v1
 const API_URL = __DEV__
-  ? 'http://10.0.2.2:8000/api/v1'
+  ? 'http://192.168.100.64:8000/api/v1'
   : 'https://sua-api-producao.com/api/v1';
 
 /**
