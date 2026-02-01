@@ -8,7 +8,7 @@
     "mobile/infogov-mobile"
   ],
   "scripts": {
-    "install:all": "npm install && cd backend/infogov-api && composer install && cd ../../mobile/infogov-mobile && npm install",
+    "install:all": "npm install && cd backend/infogov-api && composer install && cd ../.. && cd mobile/infogov-mobile && npm install",
     "lint": "cd mobile/infogov-mobile && npm run lint",
     "type-check": "cd mobile/infogov-mobile && npm run type-check"
   },
