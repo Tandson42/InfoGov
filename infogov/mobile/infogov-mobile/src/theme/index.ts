@@ -6,19 +6,19 @@
  */
 
 export const colors = {
-  // Cores primárias (azul institucional)
+  // Cores primárias (azul institucional governamental - mais sóbrio)
   primary: {
-    main: '#1E3A8A',      // Azul escuro
-    light: '#3B82F6',     // Azul médio
-    dark: '#1E40AF',      // Azul muito escuro
+    main: '#0F4C75',      // Azul institucional escuro e sóbrio
+    light: '#3282B8',     // Azul médio
+    dark: '#0A3A5C',      // Azul muito escuro
     contrastText: '#FFFFFF',
   },
 
-  // Cores secundárias
+  // Cores secundárias (verde governamental)
   secondary: {
-    main: '#059669',      // Verde
-    light: '#10B981',
-    dark: '#047857',
+    main: '#2D5016',      // Verde escuro e sóbrio
+    light: '#4A7C2F',
+    dark: '#1F350F',
     contrastText: '#FFFFFF',
   },
 
@@ -61,11 +61,12 @@ export const colors = {
     dark: '#2563EB',
   },
 
-  // Backgrounds
+  // Backgrounds (tons mais neutros e profissionais)
   background: {
-    default: '#F9FAFB',
+    default: '#F5F7FA',    // Cinza muito claro com leve tom azulado
     paper: '#FFFFFF',
     elevated: '#FFFFFF',
+    subtle: '#F0F2F5',     // Para áreas destacadas
   },
 
   // Textos
@@ -125,23 +126,30 @@ export const shadows = {
   sm: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 2,
   },
   md: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
   },
   lg: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.16,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  xl: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
   },
 };
 

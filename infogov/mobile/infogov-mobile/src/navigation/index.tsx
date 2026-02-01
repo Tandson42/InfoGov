@@ -59,15 +59,28 @@ function MainNavigator() {
         tabBarStyle: {
           paddingBottom: 8,
           paddingTop: 8,
-          height: 60,
+          height: 64,
+          backgroundColor: theme.colors.background.paper,
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.gray[200],
+          ...theme.shadows.md,
+        },
+        tabBarLabelStyle: {
+          fontSize: theme.fontSize.xs,
+          fontWeight: theme.fontWeight.semibold,
         },
         headerStyle: {
           backgroundColor: theme.colors.primary.main,
+          borderBottomWidth: 0,
+          ...theme.shadows.md,
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
-          fontWeight: '600',
+          fontWeight: theme.fontWeight.bold,
+          fontSize: theme.fontSize.lg,
+          letterSpacing: 0.3,
         },
+        headerShadowVisible: false,
       }}
     >
       <MainTab.Screen

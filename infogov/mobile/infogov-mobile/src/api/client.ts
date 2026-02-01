@@ -43,23 +43,32 @@ api.interceptors.request.use(
     try {
       const token = await storage.getItem('@InfoGov:token');
       
+      console.log('🔐 [Axios Request] URL:', config.url);
+      console.log('🔐 [Axios Request] Método:', config.method?.toUpperCase());
+      console.log('🔐 [Axios Request] Token existente:', token ? `✓ ${token.substring(0, 30)}...` : '✗ Nenhum');
+      
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
-        // Debug: log apenas em desenvolvimento (reduzido para não poluir console)
-        // console.log('Token enviado:', token.substring(0, 20) + '...');
+        console.log('✅ [Axios Request] Authorization header adicionado');
+        console.log('📝 [Axios Request] Headers:', {
+          'Content-Type': config.headers['Content-Type'],
+          'Authorization': `Bearer ${token.substring(0, 30)}...`,
+          'Accept': config.headers['Accept'],
+        });
       } else {
         // Não mostra aviso para /auth/logout pois removemos o token antes intencionalmente
         if (!config.url?.includes('/auth/logout')) {
-          console.warn('⚠️ Token não encontrado no storage para:', config.url);
+          console.warn('⚠️ [Axios Request] Token não encontrado no storage para:', config.url);
         }
       }
     } catch (error) {
-      console.error('Erro ao recuperar token:', error);
+      console.error('❌ [Axios Request] Erro ao recuperar token:', error);
     }
     
     return config;
   },
   (error) => {
+    console.error('❌ [Axios Request Error]', error);
     return Promise.reject(error);
   }
 );
@@ -69,13 +78,25 @@ api.interceptors.request.use(
  * Trata erros globalmente
  */
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('✅ [Axios Response] Status:', response.status);
+    console.log('✅ [Axios Response] URL:', response.config.url);
+    console.log('✅ [Axios Response] Data:', response.data);
+    return response;
+  },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    console.error('❌ [Axios Response Error]');
+    console.error('❌ [Axios Response Error] URL:', error.config?.url);
+    console.error('❌ [Axios Response Error] Status:', error.response?.status);
+    console.error('❌ [Axios Response Error] Message:', error.message);
+    console.error('❌ [Axios Response Error] Data:', error.response?.data);
 
     // Erro de rede (servidor inacessível)
     if (!error.response) {
       // Transforma erro de rede em mensagem mais amigável
+      console.error('❌ [Axios Response Error] ERRO DE REDE - Servidor inacessível');
       const networkError = new Error('Network Error');
       networkError.message = 'Não foi possível conectar ao servidor. Verifique sua conexão ou tente mais tarde.';
       return Promise.reject(networkError);
@@ -83,6 +104,7 @@ api.interceptors.response.use(
 
     // Token inválido ou expirado
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.warn('⚠️ [Axios Response Error] Token inválido/expirado (401) - Limpando storage...');
       originalRequest._retry = true;
 
       try {
@@ -91,11 +113,12 @@ api.interceptors.response.use(
           '@InfoGov:token',
           '@InfoGov:user',
         ]);
+        console.log('✅ [Axios Response Error] Storage limpo com sucesso');
 
         // Emite evento para navegação fazer logout
         // (será capturado pelo AuthContext)
       } catch (clearError) {
-        console.error('Erro ao limpar storage:', clearError);
+        console.error('❌ [Axios Response Error] Erro ao limpar storage:', clearError);
       }
     }
 

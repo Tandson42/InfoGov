@@ -67,13 +67,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.background.paper,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: theme.colors.gray[300],
     borderRadius: theme.borderRadius.md,
     paddingHorizontal: theme.spacing.md,
+    minHeight: 52,
+    ...theme.shadows.sm,
   },
   inputError: {
     borderColor: theme.colors.error.main,
+    borderWidth: 2,
   },
   icon: {
     marginRight: theme.spacing.sm,
@@ -83,6 +86,7 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.md,
     color: theme.colors.text.primary,
     paddingVertical: theme.spacing.md,
+    fontWeight: theme.fontWeight.regular,
   },
   errorText: {
     fontSize: theme.fontSize.sm,

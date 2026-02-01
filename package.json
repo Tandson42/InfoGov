@@ -1,0 +1,24 @@
+{
+  "name": "infogov-monorepo",
+  "version": "1.0.0",
+  "description": "InfoGov - Sistema de Informações Governamentais (Backend + Mobile)",
+  "private": true,
+  "workspaces": [
+    "backend/infogov-api",
+    "mobile/infogov-mobile"
+  ],
+  "scripts": {
+    "install:all": "npm install && cd backend/infogov-api && composer install && cd ../../mobile/infogov-mobile && npm install",
+    "lint": "cd mobile/infogov-mobile && npm run lint",
+    "type-check": "cd mobile/infogov-mobile && npm run type-check"
+  },
+  "keywords": [
+    "infogov",
+    "laravel",
+    "react-native",
+    "mobile",
+    "api"
+  ],
+  "author": "InfoGov Team",
+  "license": "MIT"
+}

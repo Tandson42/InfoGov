@@ -56,14 +56,17 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.paper,
     borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
+    padding: theme.spacing.lg,
     marginBottom: theme.spacing.md,
+    borderWidth: 0,
   },
   elevated: {
     // Sombras aplicadas via theme.shadows.md
+    borderWidth: 0,
   },
   outlined: {
-    borderWidth: 1,
-    borderColor: theme.colors.divider,
+    borderWidth: 1.5,
+    borderColor: theme.colors.gray[200],
+    backgroundColor: theme.colors.background.paper,
   },
 });

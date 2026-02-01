@@ -87,7 +87,8 @@ const baseStyles = StyleSheet.create({
     borderRadius: theme.borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
+    minHeight: 52,
+    ...theme.shadows.sm,
   },
   primaryButton: {
     backgroundColor: theme.colors.primary.main,
@@ -104,7 +105,9 @@ const baseStyles = StyleSheet.create({
     backgroundColor: theme.colors.error.main,
   },
   disabledButton: {
-    opacity: 0.5,
+    opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   smallButton: {
     paddingVertical: theme.spacing.sm,

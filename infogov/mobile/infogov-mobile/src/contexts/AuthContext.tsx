@@ -27,27 +27,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   async function loadStorageData() {
+    console.log('🔄 [AuthContext] loadStorageData() chamado - carregando dados armazenados');
+    
     try {
+      console.log('💾 [AuthContext] Buscando token e usuário do storage...');
       const [token, storedUser] = await Promise.all([
         authService.getToken(),
         authService.getStoredUser(),
       ]);
 
+      console.log('📊 [AuthContext] Dados carregados:', {
+        token: token ? `✓ ${token.substring(0, 30)}...` : '✗ Não encontrado',
+        usuario: storedUser ? `✓ ${storedUser.email}` : '✗ Não encontrado',
+      });
+
       if (token && storedUser) {
+        console.log('✅ [AuthContext] Token e usuário encontrados - carregando usuário local');
         setUser(storedUser);
         
         // Atualiza dados do usuário do servidor
         try {
+          console.log('🔄 [AuthContext] Atualizando dados do usuário do servidor...');
           const updatedUser = await authService.me();
+          console.log('✅ [AuthContext] Dados do usuário atualizados com sucesso');
           setUser(updatedUser);
         } catch (error) {
           // Se falhar, mantém dados locais
-          console.log('Erro ao atualizar usuário:', error);
+          console.log('⚠️ [AuthContext] Erro ao atualizar usuário (mantendo dados locais):', error);
         }
+      } else {
+        console.log('ℹ️ [AuthContext] Nenhum token ou usuário encontrado - usuário não autenticado');
       }
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
+      console.error('❌ [AuthContext] Erro ao carregar dados:', error);
     } finally {
+      console.log('✅ [AuthContext] Loading finalizado');
       setLoading(false);
     }
   }
@@ -56,10 +70,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Realiza login
    */
   async function signIn(email: string, password: string) {
+    console.log('🔐 [AuthContext] signIn() chamado para:', email);
+    
     try {
+      console.log('⏳ [AuthContext] Chamando authService.login()...');
       const { user: loggedUser } = await authService.login({ email, password });
+      
+      console.log('✅ [AuthContext] Login bem-sucedido - atualizando estado');
       setUser(loggedUser);
+      console.log('👤 [AuthContext] Usuário definido no estado:', loggedUser.email);
     } catch (error) {
+      console.error('❌ [AuthContext] Erro no login:', error);
       throw new Error(getErrorMessage(error));
     }
   }
@@ -80,24 +101,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Realiza logout
    */
   async function signOut() {
+    console.log('🔓 [AuthContext] signOut() chamado');
+    
     try {
       // Remove dados locais primeiro para garantir que o estado seja atualizado
+      console.log('⏳ [AuthContext] Chamando authService.logout()...');
       await authService.logout();
+      console.log('✅ [AuthContext] authService.logout() concluído');
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error('❌ [AuthContext] Erro ao fazer logout:', error);
       // Mesmo se falhar no servidor, remove dados locais
       try {
+        console.log('🔄 [AuthContext] Tentando limpar dados novamente...');
         await authService.logout();
+        console.log('✅ [AuthContext] Dados limpos com sucesso');
       } catch (e) {
-        console.error('Erro ao limpar dados locais:', e);
+        console.error('❌ [AuthContext] Erro ao limpar dados locais:', e);
       }
     }
     
     // Garante que o estado seja limpo (fora do finally para sempre executar)
+    console.log('🧹 [AuthContext] Limpando estado da aplicação...');
     setUser(null);
     setLoading(false);
     
-    console.log('✅ Logout concluído - usuário removido do estado, redirecionando para login...');
+    console.log('✅ [AuthContext] Logout concluído - usuário removido do estado, redirecionando para login...');
   }
 
   /**

@@ -98,19 +98,30 @@ export default function DepartmentListScreen() {
   };
 
   const renderItem = ({ item }: { item: Department }) => (
-    <Card variant="elevated">
+    <Card variant="elevated" style={styles.departmentCard}>
       <View style={styles.cardHeader}>
+        <View style={styles.cardIconContainer}>
+          <Ionicons 
+            name="business" 
+            size={24} 
+            color={item.active ? theme.colors.primary.main : theme.colors.gray[400]} 
+          />
+        </View>
         <View style={styles.cardTitle}>
           <Text style={styles.departmentName}>{item.name}</Text>
-          <View
-            style={[
-              styles.statusBadge,
-              item.active ? styles.activeBadge : styles.inactiveBadge,
-            ]}
-          >
-            <Text style={styles.statusText}>
-              {item.active ? 'Ativo' : 'Inativo'}
-            </Text>
+          <View style={styles.cardMeta}>
+            <Text style={styles.departmentCode}>{item.code}</Text>
+            <View
+              style={[
+                styles.statusBadge,
+                item.active ? styles.activeBadge : styles.inactiveBadge,
+              ]}
+            >
+              <View style={styles.statusDot} />
+              <Text style={styles.statusText}>
+                {item.active ? 'Ativo' : 'Inativo'}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -119,15 +130,19 @@ export default function DepartmentListScreen() {
             onPress={() => handleDelete(item.id, item.name)}
             style={styles.deleteButton}
           >
-            <Ionicons name="trash" size={20} color={theme.colors.error.main} />
+            <Ionicons name="trash-outline" size={22} color={theme.colors.error.main} />
           </TouchableOpacity>
         )}
       </View>
 
-      <Text style={styles.departmentCode}>Código: {item.code}</Text>
-      <Text style={styles.departmentDate}>
-        Criado em: {formatDate(item.created_at)}
-      </Text>
+      <View style={styles.cardFooter}>
+        <View style={styles.dateContainer}>
+          <Ionicons name="calendar-outline" size={14} color={theme.colors.text.disabled} />
+          <Text style={styles.departmentDate}>
+            Criado em {formatDate(item.created_at)}
+          </Text>
+        </View>
+      </View>
     </Card>
   );
 
@@ -264,7 +279,8 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
     backgroundColor: theme.colors.background.paper,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: theme.colors.gray[200],
+    ...theme.shadows.sm,
   },
   searchInputContainer: {
     flexDirection: 'row',
@@ -272,6 +288,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.default,
     borderRadius: theme.borderRadius.md,
     paddingHorizontal: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[200],
+    ...theme.shadows.sm,
   },
   searchIcon: {
     marginRight: theme.spacing.sm,
@@ -288,19 +307,21 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
     backgroundColor: theme.colors.background.paper,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: theme.colors.gray[200],
   },
   filterButton: {
     flex: 1,
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: theme.spacing.md,
     borderRadius: theme.borderRadius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: theme.colors.gray[300],
     alignItems: 'center',
+    backgroundColor: theme.colors.background.paper,
   },
   filterActive: {
     backgroundColor: theme.colors.primary.main,
     borderColor: theme.colors.primary.main,
+    ...theme.shadows.sm,
   },
   filterText: {
     fontSize: theme.fontSize.sm,
@@ -313,27 +334,63 @@ const styles = StyleSheet.create({
   list: {
     padding: theme.spacing.md,
   },
+  departmentCard: {
+    marginBottom: theme.spacing.md,
+  },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
+    gap: theme.spacing.md,
+  },
+  cardIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.background.subtle,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.gray[200],
   },
   cardTitle: {
     flex: 1,
-    marginRight: theme.spacing.sm,
   },
   departmentName: {
     fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.semibold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.xs,
+    lineHeight: 24,
+  },
+  cardMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    flexWrap: 'wrap',
+  },
+  departmentCode: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.text.secondary,
+    fontWeight: theme.fontWeight.medium,
+    backgroundColor: theme.colors.background.subtle,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.sm,
   },
   statusBadge: {
-    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.sm,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.full,
+    gap: 4,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#fff',
   },
   activeBadge: {
     backgroundColor: theme.colors.success.main,
@@ -348,15 +405,23 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     padding: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: `${theme.colors.error.main}10`,
   },
-  departmentCode: {
-    fontSize: theme.fontSize.md,
-    color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs,
+  cardFooter: {
+    paddingTop: theme.spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.gray[200],
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
   },
   departmentDate: {
     fontSize: theme.fontSize.sm,
     color: theme.colors.text.disabled,
+    fontWeight: theme.fontWeight.regular,
   },
   emptyContainer: {
     paddingVertical: theme.spacing.xxl * 2,

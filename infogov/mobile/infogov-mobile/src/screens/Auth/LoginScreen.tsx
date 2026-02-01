@@ -25,11 +25,17 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const handleLogin = async () => {
+    console.log('🔐 [LoginScreen] handleLogin() chamado');
+    
     // Reset errors
     setErrors({});
 
     // Validação básica
     if (!email || !password) {
+      console.warn('⚠️ [LoginScreen] Validação falhou - campos vazios');
+      console.warn('⚠️ [LoginScreen] Email:', email ? '✓ preenchido' : '✗ vazio');
+      console.warn('⚠️ [LoginScreen] Senha:', password ? '✓ preenchida' : '✗ vazia');
+      
       setErrors({
         email: !email ? 'E-mail é obrigatório' : undefined,
         password: !password ? 'Senha é obrigatória' : undefined,
@@ -37,15 +43,23 @@ export default function LoginScreen() {
       return;
     }
 
+    console.log('✅ [LoginScreen] Validação passou - credenciais preenchidas');
+    console.log('📊 [LoginScreen] Dados do login:', { email, password: '***' });
+
     setLoading(true);
+    console.log('⏳ [LoginScreen] Estado loading definido como true');
 
     try {
+      console.log('🔄 [LoginScreen] Chamando signIn()...');
       await signIn(email, password);
+      console.log('✅ [LoginScreen] signIn() concluído com sucesso');
       // Login bem-sucedido - navegação automática pelo AuthContext
     } catch (error) {
+      console.error('❌ [LoginScreen] Erro no signIn():', error);
       // Tratamento de erros com mensagens específicas
       handleAuthError(error);
     } finally {
+      console.log('🏁 [LoginScreen] Finally - definindo loading como false');
       setLoading(false);
     }
   };
@@ -61,10 +75,13 @@ export default function LoginScreen() {
       >
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Text style={styles.logoIcon}>🏛️</Text>
+            <View style={styles.logoInner}>
+              <Text style={styles.logoIcon}>🏛️</Text>
+            </View>
           </View>
           <Text style={styles.title}>InfoGov</Text>
           <Text style={styles.subtitle}>Sistema de Informações Governamentais</Text>
+          <View style={styles.divider} />
         </View>
 
         <View style={styles.form}>
@@ -127,41 +144,68 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xxl,
   },
   logoContainer: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.primary.main,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
-    ...theme.shadows.lg,
+    marginBottom: theme.spacing.lg,
+    ...theme.shadows.xl,
+    borderWidth: 4,
+    borderColor: theme.colors.primary.light,
+  },
+  logoInner: {
+    width: 100,
+    height: 100,
+    borderRadius: theme.borderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logoIcon: {
-    fontSize: 50,
+    fontSize: 56,
   },
   title: {
-    fontSize: theme.fontSize.xxxl,
+    fontSize: theme.fontSize.xxxl + 4,
     fontWeight: theme.fontWeight.bold,
-    color: theme.colors.primary.main,
+    color: theme.colors.primary.dark,
     marginBottom: theme.spacing.xs,
+    letterSpacing: 0.5,
   },
   subtitle: {
-    fontSize: theme.fontSize.sm,
+    fontSize: theme.fontSize.md,
     color: theme.colors.text.secondary,
     textAlign: 'center',
+    fontWeight: theme.fontWeight.medium,
+    marginTop: theme.spacing.xs,
+  },
+  divider: {
+    width: 60,
+    height: 4,
+    backgroundColor: theme.colors.primary.main,
+    borderRadius: theme.borderRadius.full,
+    marginTop: theme.spacing.lg,
+    marginBottom: theme.spacing.xl,
   },
   form: {
     marginBottom: theme.spacing.xl,
+    backgroundColor: theme.colors.background.paper,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.lg,
+    ...theme.shadows.md,
   },
   loginButton: {
-    marginTop: theme.spacing.md,
+    marginTop: theme.spacing.lg,
   },
   infoText: {
     marginTop: theme.spacing.lg,
     fontSize: theme.fontSize.sm,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
+    paddingHorizontal: theme.spacing.md,
+    fontStyle: 'italic',
   },
   footer: {
     alignItems: 'center',

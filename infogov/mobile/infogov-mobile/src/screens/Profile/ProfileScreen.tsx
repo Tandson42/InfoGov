@@ -82,27 +82,35 @@ export default function ProfileScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Avatar e Nome */}
-      <View style={styles.headerSection}>
-        <View style={styles.avatar}>
-          <Ionicons name="person" size={48} color="#fff" />
-        </View>
-
-        <Text style={styles.userName}>{user?.name}</Text>
-        <Text style={styles.userEmail}>{user?.email}</Text>
-
-        {user?.role && (
-          <View
-            style={[
-              styles.roleBadge,
-              { backgroundColor: getRoleColor(user.role.name as any) },
-            ]}
-          >
-            <Text style={styles.roleText}>
-              {getRoleName(user.role.name as any)}
-            </Text>
+      <Card variant="elevated" style={styles.headerCard}>
+        <View style={styles.headerSection}>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatar}>
+              <Ionicons name="person" size={48} color={theme.colors.primary.main} />
+            </View>
+            <View style={styles.avatarBadge}>
+              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success.main} />
+            </View>
           </View>
-        )}
-      </View>
+
+          <Text style={styles.userName}>{user?.name}</Text>
+          <Text style={styles.userEmail}>{user?.email}</Text>
+
+          {user?.role && (
+            <View
+              style={[
+                styles.roleBadge,
+                { backgroundColor: getRoleColor(user.role.name as any) },
+              ]}
+            >
+              <Ionicons name="shield-checkmark" size={16} color="#fff" />
+              <Text style={styles.roleText}>
+                {getRoleName(user.role.name as any)}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Card>
 
       {/* Informações do Perfil */}
       <View style={styles.section}>
@@ -251,35 +259,65 @@ const styles = StyleSheet.create({
   content: {
     padding: theme.spacing.md,
   },
+  headerCard: {
+    marginBottom: theme.spacing.xl,
+    backgroundColor: theme.colors.primary.main,
+    borderWidth: 0,
+  },
   headerSection: {
     alignItems: 'center',
-    marginBottom: theme.spacing.xl,
+    padding: theme.spacing.sm,
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: theme.spacing.md,
   },
   avatar: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: theme.borderRadius.full,
-    backgroundColor: theme.colors.primary.main,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
-    ...theme.shadows.lg,
+    borderWidth: 4,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    ...theme.shadows.xl,
+  },
+  avatarBadge: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    width: 32,
+    height: 32,
+    borderRadius: theme.borderRadius.full,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: theme.colors.primary.main,
+    ...theme.shadows.md,
   },
   userName: {
-    fontSize: theme.fontSize.xxl,
+    fontSize: theme.fontSize.xxxl,
     fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text.primary,
+    color: '#fff',
     marginBottom: theme.spacing.xs,
+    textAlign: 'center',
   },
   userEmail: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.text.secondary,
+    color: 'rgba(255, 255, 255, 0.9)',
     marginBottom: theme.spacing.md,
+    fontWeight: theme.fontWeight.medium,
   },
   roleBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.borderRadius.full,
+    gap: theme.spacing.xs,
+    ...theme.shadows.sm,
   },
   roleText: {
     fontSize: theme.fontSize.sm,
@@ -290,23 +328,28 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   sectionTitle: {
-    fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.semibold,
+    fontSize: theme.fontSize.xl,
+    fontWeight: theme.fontWeight.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
+    marginTop: theme.spacing.sm,
+    letterSpacing: 0.3,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
   },
   infoIcon: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: `${theme.colors.primary.main}10`,
+    backgroundColor: `${theme.colors.primary.main}15`,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: `${theme.colors.primary.main}20`,
   },
   infoContent: {
     flex: 1,
@@ -332,12 +375,14 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   menuIconContainer: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.gray[100],
+    backgroundColor: theme.colors.background.subtle,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.gray[200],
   },
   menuText: {
     flex: 1,
@@ -345,6 +390,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   logoutButton: {
+    marginTop: theme.spacing.xl,
     marginBottom: theme.spacing.lg,
   },
   versionText: {
